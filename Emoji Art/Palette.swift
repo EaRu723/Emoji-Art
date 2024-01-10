@@ -4,10 +4,11 @@
 //
 //  Created by Andrea Russo on 12/15/23.
 //
+//
 
 import Foundation
 
-struct Palette: Identifiable, Codable {
+struct Palette: Identifiable, Codable, Hashable {
     var name: String
     var emojis: String
     var id = UUID()

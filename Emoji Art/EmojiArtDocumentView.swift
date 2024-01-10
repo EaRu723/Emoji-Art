@@ -12,9 +12,9 @@ struct EmojiArtDocumentView: View {
     typealias Emoji = EmojiArt.Emoji
     
     @ObservedObject var document: EmojiArtDocument
-        
-    private let paletteEmojiSize: CGFloat = 40
     
+    private let paletteEmojiSize: CGFloat = 40
+
     var body: some View {
         VStack(spacing: 0) {
             documentBody
@@ -33,7 +33,7 @@ struct EmojiArtDocumentView: View {
                     .scaleEffect(zoom * gestureZoom)
                     .offset(pan + gesturePan)
             }
-            .gesture(panGesture.simultaneously( with: zoomGesture))
+            .gesture(panGesture.simultaneously(with: zoomGesture))
             .dropDestination(for: Sturldata.self) { sturldatas, location in
                 return drop(sturldatas, at: location, in: geometry)
             }
@@ -60,7 +60,7 @@ struct EmojiArtDocumentView: View {
                 .position(emoji.position.in(geometry))
         }
     }
-    
+
     @State private var zoom: CGFloat = 1
     @State private var pan: CGOffset = .zero
     
@@ -79,14 +79,13 @@ struct EmojiArtDocumentView: View {
     
     private var panGesture: some Gesture {
         DragGesture()
-            .updating($gesturePan) { value, gesturePan, _ in
-                gesturePan = value.translation
+            .updating($gesturePan) { inMotionDragGestureValue, gesturePan, _ in
+                gesturePan = inMotionDragGestureValue.translation
             }
-            .onEnded { value in
-                pan += value.translation
+            .onEnded { endingDragGestureValue in
+                pan += endingDragGestureValue.translation
             }
     }
-    
     
     private func drop(_ sturldatas: [Sturldata], at location: CGPoint, in geometry: GeometryProxy) -> Bool {
         for sturldata in sturldatas {
@@ -111,13 +110,15 @@ struct EmojiArtDocumentView: View {
     private func emojiPosition(at location: CGPoint, in geometry: GeometryProxy) -> Emoji.Position {
         let center = geometry.frame(in: .local).center
         return Emoji.Position(
-            x: Int(((location.x - center.x - pan.width)) / zoom),
-            y: Int((-(location.y - center.y - pan.height)) / zoom)
+            x: Int((location.x - center.x - pan.width) / zoom),
+            y: Int(-(location.y - center.y - pan.height) / zoom)
         )
     }
 }
 
-#Preview {
-    EmojiArtDocumentView(document: EmojiArtDocument())
-        .environmentObject(PaletteStore(named: "Preview"))
+struct EmojiArtDocumentView_Previews: PreviewProvider {
+    static var previews: some View {
+        EmojiArtDocumentView(document: EmojiArtDocument())
+            .environmentObject(PaletteStore(named: "Preview"))
+    }
 }

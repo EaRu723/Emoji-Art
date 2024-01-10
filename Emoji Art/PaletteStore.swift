@@ -23,8 +23,10 @@ extension UserDefaults {
     }
 }
 
-class PaletteStore: ObservableObject {
+class PaletteStore: ObservableObject, Identifiable {
     let name: String
+    
+    var id: String { name }
     
     private var userDefaultsKey: String { "PaletteStore:" + name }
     
@@ -56,6 +58,7 @@ class PaletteStore: ObservableObject {
         get { boundsCheckedPaletteIndex(_cursorIndex) }
         set { _cursorIndex = boundsCheckedPaletteIndex(newValue) }
     }
+    
     
     private func boundsCheckedPaletteIndex(_ index: Int) -> Int {
         var index = index % palettes.count
@@ -101,5 +104,15 @@ class PaletteStore: ObservableObject {
     
     func append(name: String, emojis: String) {
         append(Palette(name: name, emojis: emojis))
+    }
+}
+
+extension PaletteStore: Hashable {
+    static func == (lhs: PaletteStore, rhs: PaletteStore) -> Bool {
+        lhs.name == rhs.name
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
     }
 }

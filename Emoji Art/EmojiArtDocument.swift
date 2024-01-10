@@ -24,7 +24,7 @@ class EmojiArtDocument: ObservableObject {
         print("autosaved to \(autosaveURL)")
     }
     
-    private func save (to url: URL) {
+    private func save(to url: URL) {
         do {
             let data = try emojiArt.json()
             try data.write(to: url)
@@ -95,3 +95,4 @@ extension EmojiArt.Emoji.Position {
         return CGPoint(x: center.x + CGFloat(x), y: center.y - CGFloat(y))
     }
 }
+
